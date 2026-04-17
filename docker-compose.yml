@@ -10,6 +10,6 @@ services:
       - /app/node_modules
       - /app/.next
     env_file:
-      - .env.local
-    environment:
-      - WATCHPACK_POLLING=true
+      - path: .env.local
+        required: false
+    # Set WATCHPACK_POLLING=true in .env.local if file-watching doesn't work (macOS/Windows)
