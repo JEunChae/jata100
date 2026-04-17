@@ -72,7 +72,7 @@ export default function BattlePhase({
   const isVi = current.word.type === 'Vi'
 
   return (
-    <div className="min-h-screen flex flex-col max-w-lg mx-auto">
+    <div className="min-h-screen flex flex-col max-w-lg mx-auto md:pt-10">
       {/* Progress bar */}
       <div className="h-1.5 bg-[#eef0f8]">
         <div

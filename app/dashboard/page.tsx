@@ -58,7 +58,7 @@ export default function DashboardPage() {
   const progressPct = Math.round((data.totalMastered / 100) * 100)
 
   return (
-    <div className="min-h-screen max-w-sm mx-auto flex flex-col">
+    <div className="min-h-screen max-w-sm mx-auto flex flex-col md:pt-10">
       {/* Header */}
       <header className="flex justify-between items-center px-5 py-4 bg-white border-b border-[#d9dde8]">
         <span className="text-lg font-black text-[#2e3856]">자타 100</span>
