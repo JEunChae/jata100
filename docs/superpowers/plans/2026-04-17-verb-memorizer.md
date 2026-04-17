@@ -6,7 +6,7 @@
 
 **Architecture:** Client-side quiz engine with fire-and-forget Supabase sync. Next.js 14 App Router handles routing; Supabase provides ID/PW auth (no email verification) and PostgreSQL. All quiz scoring runs in the browser — each answer triggers a background upsert to Supabase without awaiting.
 
-**Tech Stack:** Next.js 14 (App Router), TypeScript, Tailwind CSS, Supabase JS v2 + @supabase/ssr, Vitest, Docker
+**Tech Stack:** Next.js 16 (App Router), TypeScript, Tailwind CSS, Supabase JS v2 + @supabase/ssr, Vitest, Docker
 
 ---
 
