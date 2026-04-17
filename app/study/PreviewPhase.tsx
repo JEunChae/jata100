@@ -44,14 +44,14 @@ function WordCard({ word, fullWidth = false }: { word: Word; fullWidth?: boolean
 
   return (
     <div
-      className={`${fullWidth ? 'w-full' : 'flex-1 min-w-0'} rounded-2xl p-4 border-2 flex flex-col justify-center overflow-hidden`}
+      className={`${fullWidth ? 'w-full' : 'flex-1 min-w-0'} rounded-2xl p-3 sm:p-5 md:p-7 border-2 flex flex-col justify-center overflow-hidden`}
       style={{
         backgroundColor: isVi ? '#f0f1ff' : '#fff8ed',
         borderColor: isVi ? '#c5caff' : '#ffd89b',
       }}
     >
       <span
-        className="inline-block self-start text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-3"
+        className="inline-block self-start text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-2 sm:mb-3"
         style={{
           backgroundColor: isVi ? '#4255ff' : '#ff9500',
           color: 'white',
@@ -59,8 +59,8 @@ function WordCard({ word, fullWidth = false }: { word: Word; fullWidth?: boolean
       >
         {isVi ? '자동사' : '타동사'}
       </span>
-      <p className="text-2xl font-black mb-1.5 text-[#2e3856] break-words">{word.english}</p>
-      <p className="text-base text-[#586380] break-words">{meaning}</p>
+      <p className="text-xl sm:text-2xl md:text-3xl font-black mb-1 sm:mb-2 text-[#2e3856] break-words">{word.english}</p>
+      <p className="text-sm sm:text-base md:text-lg text-[#586380] break-words">{meaning}</p>
     </div>
   )
 }
