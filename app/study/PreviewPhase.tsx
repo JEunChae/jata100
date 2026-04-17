@@ -44,14 +44,14 @@ function WordCard({ word, fullWidth = false }: { word: Word; fullWidth?: boolean
 
   return (
     <div
-      className={`${fullWidth ? 'w-full' : 'flex-1'} rounded-2xl p-6 border-2`}
+      className={`${fullWidth ? 'w-full' : 'flex-1 min-w-0'} rounded-2xl p-4 border-2 flex flex-col justify-center overflow-hidden`}
       style={{
         backgroundColor: isVi ? '#f0f1ff' : '#fff8ed',
         borderColor: isVi ? '#c5caff' : '#ffd89b',
       }}
     >
       <span
-        className="text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md"
+        className="inline-block self-start text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-3"
         style={{
           backgroundColor: isVi ? '#4255ff' : '#ff9500',
           color: 'white',
@@ -59,8 +59,8 @@ function WordCard({ word, fullWidth = false }: { word: Word; fullWidth?: boolean
       >
         {isVi ? '자동사' : '타동사'}
       </span>
-      <p className="text-3xl font-black mt-3 mb-2 text-[#2e3856]">{word.english}</p>
-      <p className="text-lg text-[#586380]">{meaning}</p>
+      <p className="text-2xl font-black mb-1.5 text-[#2e3856] break-words">{word.english}</p>
+      <p className="text-base text-[#586380] break-words">{meaning}</p>
     </div>
   )
 }
@@ -98,17 +98,15 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
       </div>
 
       {/* Cards */}
-      <div className="flex-1 flex p-5">
+      <div className="flex-1 min-h-0 flex p-4">
         {current.isPair ? (
-          <div className="flex gap-3 w-full items-stretch">
+          <div className="flex gap-3 w-full">
             {current.words.map((w) => (
               <WordCard key={w.id} word={w} />
             ))}
           </div>
         ) : (
-          <div className="flex items-center justify-center w-full">
-            <WordCard word={current.words[0]} fullWidth />
-          </div>
+          <WordCard word={current.words[0]} fullWidth />
         )}
       </div>
 
