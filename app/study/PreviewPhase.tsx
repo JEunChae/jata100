@@ -98,7 +98,7 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
       </div>
 
       {/* Cards */}
-      <div className="flex-1 min-h-0 flex p-4">
+      <div className="flex-1 min-h-0 flex p-3 sm:p-5 md:p-8">
         {current.isPair ? (
           <div className="flex gap-3 w-full">
             {current.words.map((w) => (
