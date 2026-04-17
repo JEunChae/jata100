@@ -79,7 +79,7 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col max-w-lg mx-auto">
+    <div className="min-h-screen flex flex-col max-w-lg mx-auto md:pt-10">
       {/* Top progress bar */}
       <div className="h-1.5 bg-[#eef0f8]">
         <div
@@ -89,13 +89,13 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
       </div>
 
       {/* Header */}
-      <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8]">
+      <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8] ">
         <span className="text-sm font-semibold text-[#939bb4]">예습</span>
         <span className="text-sm font-semibold text-[#2e3856]">{index + 1} / {slides.length}</span>
       </div>
 
       {/* Cards */}
-      <div className="px-4 py-5 sm:px-6 md:pt-10">
+      <div className="px-4 py-5 sm:px-6">
         {current.isPair ? (
           <div className="flex gap-3 w-full">
             {current.words.map((w) => (
