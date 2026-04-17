@@ -29,12 +29,6 @@ export default function OnboardingPage() {
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <div
-            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 text-white text-2xl font-black"
-            style={{ backgroundColor: '#4255ff' }}
-          >
-            목
-          </div>
           <h2 className="text-2xl font-black text-[#2e3856]">하루 목표 설정</h2>
           <p className="text-[#939bb4] mt-1 text-sm">매일 몇 개씩 공부할까요?</p>
         </div>

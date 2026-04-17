@@ -33,12 +33,6 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-10">
-          <div
-            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 text-white text-2xl font-black"
-            style={{ backgroundColor: '#4255ff' }}
-          >
-            자
-          </div>
           <h1 className="text-3xl font-black text-[#2e3856]">자타 100</h1>
           <p className="text-[#939bb4] mt-1 text-sm">영어 자/타동사 완전 정복</p>
         </div>
