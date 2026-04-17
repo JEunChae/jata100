@@ -29,16 +29,23 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        <h1 className="text-3xl font-bold text-center mb-2">자타 100</h1>
-        <p className="text-gray-500 text-center mb-8 text-sm">
-          영어 자/타동사 완전 정복
-        </p>
+        {/* Logo */}
+        <div className="text-center mb-10">
+          <div
+            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 text-white text-2xl font-black"
+            style={{ backgroundColor: '#4255ff' }}
+          >
+            자
+          </div>
+          <h1 className="text-3xl font-black text-[#2e3856]">자타 100</h1>
+          <p className="text-[#939bb4] mt-1 text-sm">영어 자/타동사 완전 정복</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-[#2e3856] mb-1.5">
               아이디
             </label>
             <input
@@ -46,40 +53,43 @@ export default function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="아이디 입력"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-white border border-[#d9dde8] rounded-xl text-[#2e3856] placeholder:text-[#c2c8d8] focus:outline-none focus:border-[#4255ff] focus:ring-2 focus:ring-[#4255ff]/20 transition-all"
               autoComplete="username"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-[#2e3856] mb-1.5">
               비밀번호
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="비밀번호 입력"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="비밀번호 입력 (6자 이상)"
+              className="w-full px-4 py-3 bg-white border border-[#d9dde8] rounded-xl text-[#2e3856] placeholder:text-[#c2c8d8] focus:outline-none focus:border-[#4255ff] focus:ring-2 focus:ring-[#4255ff]/20 transition-all"
               autoComplete="current-password"
             />
           </div>
 
           {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="w-full py-3.5 rounded-xl font-bold text-white text-base disabled:opacity-60 transition-opacity mt-2"
+            style={{ backgroundColor: '#4255ff' }}
           >
             {loading ? '로딩 중...' : '시작하기'}
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          없는 아이디는 자동으로 만들어집니다
+        <p className="text-center text-xs text-[#939bb4] mt-6">
+          없는 아이디는 자동으로 계정이 만들어집니다
         </p>
       </div>
     </div>

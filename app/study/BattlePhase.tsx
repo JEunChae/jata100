@@ -14,6 +14,8 @@ interface BattlePhaseProps {
 
 type AnswerState = 'idle' | 'correct' | 'wrong'
 
+const LABELS = ['①', '②']
+
 export default function BattlePhase({
   initialQueue,
   allWords,
@@ -28,6 +30,7 @@ export default function BattlePhase({
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
 
   const current = queue[0]
+  const progressPct = Math.max(2, (1 - queue.length / initialQueue.length) * 100)
 
   // Memoized per word.id — prevents choice shuffling during feedback re-renders
   const choices = useMemo(() => {
@@ -66,48 +69,63 @@ export default function BattlePhase({
 
   if (!current || !choices) return null
 
+  const isVi = current.word.type === 'Vi'
+
   return (
-    <div className="min-h-screen flex flex-col p-4 max-w-lg mx-auto">
+    <div className="min-h-screen flex flex-col max-w-lg mx-auto">
       {/* Progress bar */}
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-500 mb-1">
-          <span>전투</span>
-          <span>남은 단어 {queue.length}개</span>
-        </div>
-        <div className="h-2 bg-gray-200 rounded-full">
-          <div
-            className="h-2 bg-orange-500 rounded-full transition-all"
-            style={{
-              width: `${Math.max(5, (1 - queue.length / initialQueue.length) * 100)}%`,
-            }}
-          />
-        </div>
+      <div className="h-1.5 bg-[#eef0f8]">
+        <div
+          className="h-full transition-all duration-500"
+          style={{ width: `${progressPct}%`, backgroundColor: '#4255ff' }}
+        />
       </div>
 
-      {/* Word */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <p className="text-4xl font-bold mb-2">{current.word.english}</p>
-        <p className="text-sm text-gray-400 mb-12">
-          {current.word.type === 'Vi' ? '자동사' : '타동사'}
-        </p>
+      {/* Header */}
+      <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8]">
+        <span className="text-sm font-semibold text-[#939bb4]">전투</span>
+        <span className="text-sm font-semibold text-[#2e3856]">남은 {queue.length}개</span>
+      </div>
 
-        {/* Answer buttons */}
+      {/* Question card */}
+      <div className="flex-1 flex flex-col items-center justify-center p-5">
+        <div className="w-full bg-white rounded-2xl border-2 border-[#d9dde8] p-8 text-center mb-6 shadow-sm">
+          <span
+            className="inline-block text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-4 text-white"
+            style={{ backgroundColor: isVi ? '#4255ff' : '#ff9500' }}
+          >
+            {isVi ? '자동사' : '타동사'}
+          </span>
+          <p className="text-4xl font-black text-[#2e3856]">{current.word.english}</p>
+          <p className="text-[#939bb4] text-sm mt-3">뜻을 고르세요</p>
+        </div>
+
+        {/* Answer choices */}
         <div className="w-full space-y-3">
-          {choices.opts.map((opt) => {
-            const isCorrect = opt === choices.correct
-            let btnClass =
-              'w-full py-4 px-6 rounded-xl font-semibold text-left border-2 transition-colors '
+          {choices.opts.map((opt, i) => {
+            const isCorrectOpt = opt === choices.correct
+            let borderColor = '#d9dde8'
+            let bgColor = 'white'
+            let textColor = '#2e3856'
+            let labelBg = '#eef0f8'
+            let labelText = '#939bb4'
 
-            if (answerState === 'idle') {
-              btnClass += 'border-gray-200 bg-white hover:border-blue-400 hover:bg-blue-50'
-            } else if (opt === selectedAnswer) {
-              btnClass += answerState === 'correct'
-                ? 'border-green-500 bg-green-50 text-green-700'
-                : 'border-red-500 bg-red-50 text-red-700'
-            } else if (answerState === 'wrong' && isCorrect) {
-              btnClass += 'border-green-500 bg-green-50 text-green-700'
-            } else {
-              btnClass += 'border-gray-200 bg-white opacity-50'
+            if (answerState !== 'idle') {
+              if (opt === selectedAnswer) {
+                if (answerState === 'correct') {
+                  borderColor = '#23b26d'; bgColor = '#e8fdf2'; textColor = '#1a7a4a'
+                  labelBg = '#23b26d'; labelText = 'white'
+                } else {
+                  borderColor = '#ff4444'; bgColor = '#fff0f0'; textColor = '#cc2222'
+                  labelBg = '#ff4444'; labelText = 'white'
+                }
+              } else if (answerState === 'wrong' && isCorrectOpt) {
+                borderColor = '#23b26d'; bgColor = '#e8fdf2'; textColor = '#1a7a4a'
+                labelBg = '#23b26d'; labelText = 'white'
+              } else {
+                bgColor = '#fafafa'; textColor = '#c2c8d8'
+                labelBg = '#f0f1f5'; labelText = '#c2c8d8'
+              }
             }
 
             return (
@@ -115,9 +133,16 @@ export default function BattlePhase({
                 key={opt}
                 onClick={() => handleAnswer(opt)}
                 disabled={answerState !== 'idle'}
-                className={btnClass}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 font-semibold text-left transition-all"
+                style={{ borderColor, backgroundColor: bgColor, color: textColor }}
               >
-                {opt}
+                <span
+                  className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black transition-all"
+                  style={{ backgroundColor: labelBg, color: labelText }}
+                >
+                  {LABELS[i]}
+                </span>
+                <span className="flex-1">{opt}</span>
               </button>
             )
           })}
@@ -125,16 +150,21 @@ export default function BattlePhase({
 
         {/* Feedback */}
         {answerState !== 'idle' && (
-          <p className={`mt-4 font-semibold ${answerState === 'correct' ? 'text-green-600' : 'text-red-500'}`}>
-            {answerState === 'correct' ? '정답!' : '오답 — 다시 나올 거예요'}
+          <p
+            className="mt-4 font-bold text-sm"
+            style={{ color: answerState === 'correct' ? '#23b26d' : '#ff4444' }}
+          >
+            {answerState === 'correct' ? '정답! 🎯' : '오답 — 다시 나올 거예요'}
           </p>
         )}
       </div>
 
-      {/* Stats */}
-      <p className="text-center text-sm text-gray-400 mt-4">
-        총 {attempts}번 시도 · 오늘 {newlyMastered}개 완료
-      </p>
+      {/* Bottom stats */}
+      <div className="px-5 pb-6 text-center">
+        <p className="text-xs text-[#939bb4]">
+          {attempts}번 시도 · 오늘 <span className="font-bold text-[#4255ff]">{newlyMastered}개</span> 완료
+        </p>
+      </div>
     </div>
   )
 }

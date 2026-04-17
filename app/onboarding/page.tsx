@@ -26,23 +26,30 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        <h2 className="text-2xl font-bold text-center mb-2">하루 목표 설정</h2>
-        <p className="text-gray-500 text-center mb-8 text-sm">
-          매일 몇 개씩 공부할까요?
-        </p>
+        <div className="text-center mb-10">
+          <div
+            className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 text-white text-2xl font-black"
+            style={{ backgroundColor: '#4255ff' }}
+          >
+            목
+          </div>
+          <h2 className="text-2xl font-black text-[#2e3856]">하루 목표 설정</h2>
+          <p className="text-[#939bb4] mt-1 text-sm">매일 몇 개씩 공부할까요?</p>
+        </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-8">
+        <div className="grid grid-cols-2 gap-3 mb-6">
           {GOAL_OPTIONS.map((n) => (
             <button
               key={n}
               onClick={() => setGoal(n)}
-              className={`py-4 rounded-xl text-lg font-bold border-2 transition-colors ${
+              className={`py-5 rounded-2xl text-xl font-black border-2 transition-all ${
                 goal === n
-                  ? 'border-blue-600 bg-blue-50 text-blue-600'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  ? 'border-[#4255ff] bg-[#4255ff] text-white shadow-lg'
+                  : 'border-[#d9dde8] bg-white text-[#2e3856] hover:border-[#4255ff]/40'
               }`}
+              style={goal === n ? { boxShadow: '0 4px 16px rgba(66,85,255,0.3)' } : {}}
             >
               {n}개
             </button>
@@ -52,9 +59,10 @@ export default function OnboardingPage() {
         <button
           onClick={handleStart}
           disabled={loading}
-          className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          className="w-full py-4 rounded-xl font-bold text-white text-base disabled:opacity-60 transition-opacity"
+          style={{ backgroundColor: '#4255ff' }}
         >
-          {loading ? '저장 중...' : '시작하기'}
+          {loading ? '저장 중...' : '시작하기 →'}
         </button>
       </div>
     </div>

@@ -38,19 +38,29 @@ function buildSlides(words: Word[]): PreviewSlide[] {
   return slides
 }
 
-function WordCard({ word }: { word: Word }) {
+function WordCard({ word, fullWidth = false }: { word: Word; fullWidth?: boolean }) {
   const meaning = word.type === 'Vi' ? word.korean_vi : word.korean_vt
-  const label = word.type === 'Vi' ? '자동사' : '타동사'
-  const color = word.type === 'Vi' ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'
-  const textColor = word.type === 'Vi' ? 'text-blue-600' : 'text-green-600'
+  const isVi = word.type === 'Vi'
 
   return (
-    <div className={`flex-1 rounded-2xl border-2 p-6 ${color}`}>
-      <span className={`text-xs font-bold uppercase tracking-wider ${textColor}`}>
-        {label}
+    <div
+      className={`${fullWidth ? 'w-full' : 'flex-1'} rounded-2xl p-6 border-2`}
+      style={{
+        backgroundColor: isVi ? '#f0f1ff' : '#fff8ed',
+        borderColor: isVi ? '#c5caff' : '#ffd89b',
+      }}
+    >
+      <span
+        className="text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md"
+        style={{
+          backgroundColor: isVi ? '#4255ff' : '#ff9500',
+          color: 'white',
+        }}
+      >
+        {isVi ? '자동사' : '타동사'}
       </span>
-      <p className="text-2xl font-bold mt-2 mb-1">{word.english}</p>
-      <p className="text-lg text-gray-700">{meaning}</p>
+      <p className="text-3xl font-black mt-3 mb-2 text-[#2e3856]">{word.english}</p>
+      <p className="text-lg text-[#586380]">{meaning}</p>
     </div>
   )
 }
@@ -61,6 +71,7 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
 
   const current = slides[index]
   const isLast = index === slides.length - 1
+  const progressPct = ((index + 1) / slides.length) * 100
 
   function handleNext() {
     if (isLast) {
@@ -71,34 +82,46 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-4 max-w-lg mx-auto">
-      {/* Progress */}
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-500 mb-1">
-          <span>예습</span>
-          <span>{index + 1} / {slides.length}</span>
-        </div>
-        <div className="h-2 bg-gray-200 rounded-full">
-          <div
-            className="h-2 bg-blue-500 rounded-full transition-all"
-            style={{ width: `${((index + 1) / slides.length) * 100}%` }}
-          />
-        </div>
+    <div className="min-h-screen flex flex-col max-w-lg mx-auto">
+      {/* Top progress bar */}
+      <div className="h-1.5 bg-[#eef0f8]">
+        <div
+          className="h-full transition-all duration-300"
+          style={{ width: `${progressPct}%`, backgroundColor: '#4255ff' }}
+        />
       </div>
 
-      {/* Card(s) */}
-      <div className={`flex gap-3 flex-1 items-stretch mb-8 ${current.isPair ? 'flex-row' : 'flex-col justify-center'}`}>
-        {current.words.map((w) => (
-          <WordCard key={w.id} word={w} />
-        ))}
+      {/* Header */}
+      <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8]">
+        <span className="text-sm font-semibold text-[#939bb4]">예습</span>
+        <span className="text-sm font-semibold text-[#2e3856]">{index + 1} / {slides.length}</span>
       </div>
 
-      <button
-        onClick={handleNext}
-        className="w-full py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors"
-      >
-        {isLast ? '전투 시작 →' : '다음'}
-      </button>
+      {/* Cards */}
+      <div className="flex-1 flex p-5">
+        {current.isPair ? (
+          <div className="flex gap-3 w-full items-stretch">
+            {current.words.map((w) => (
+              <WordCard key={w.id} word={w} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center w-full">
+            <WordCard word={current.words[0]} fullWidth />
+          </div>
+        )}
+      </div>
+
+      {/* Button */}
+      <div className="p-5">
+        <button
+          onClick={handleNext}
+          className="w-full py-4 rounded-2xl font-bold text-white text-lg transition-opacity hover:opacity-90 active:opacity-80"
+          style={{ backgroundColor: '#4255ff' }}
+        >
+          {isLast ? '전투 시작 →' : '다음'}
+        </button>
+      </div>
     </div>
   )
 }

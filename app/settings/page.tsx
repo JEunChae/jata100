@@ -48,46 +48,57 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 max-w-sm mx-auto">
-      <div className="flex items-center gap-3 mb-8 pt-4">
-        <button onClick={() => router.back()} className="text-gray-400 hover:text-gray-600">
-          ← 뒤로
+    <div className="min-h-screen max-w-sm mx-auto flex flex-col">
+      {/* Header */}
+      <header className="flex items-center gap-3 px-5 py-4 bg-white border-b border-[#d9dde8]">
+        <button
+          onClick={() => router.back()}
+          className="text-[#939bb4] hover:text-[#2e3856] transition-colors p-1 -ml-1"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
-        <h2 className="text-xl font-bold">설정</h2>
-      </div>
+        <h2 className="text-lg font-black text-[#2e3856]">설정</h2>
+      </header>
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm mb-4">
-        <p className="font-semibold mb-4">하루 목표 단어 수</p>
-        <div className="grid grid-cols-2 gap-3">
-          {GOAL_OPTIONS.map((n) => (
-            <button
-              key={n}
-              onClick={() => setGoal(n)}
-              className={`py-3 rounded-xl font-bold border-2 transition-colors ${
-                goal === n
-                  ? 'border-blue-600 bg-blue-50 text-blue-600'
-                  : 'border-gray-200 text-gray-600'
-              }`}
-            >
-              {n}개
-            </button>
-          ))}
+      <main className="flex-1 p-5 space-y-4">
+        {/* Goal selector */}
+        <div className="bg-white rounded-2xl border border-[#d9dde8] p-5">
+          <p className="text-xs font-semibold text-[#939bb4] uppercase tracking-wider mb-4">하루 목표 단어 수</p>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {GOAL_OPTIONS.map((n) => (
+              <button
+                key={n}
+                onClick={() => setGoal(n)}
+                className={`py-4 rounded-xl font-black text-lg border-2 transition-all ${
+                  goal === n
+                    ? 'border-[#4255ff] bg-[#4255ff] text-white'
+                    : 'border-[#d9dde8] bg-white text-[#2e3856] hover:border-[#4255ff]/40'
+                }`}
+              >
+                {n}개
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="w-full py-3 rounded-xl font-bold text-white text-sm transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#4255ff' }}
+          >
+            {saved ? '저장됨 ✓' : '저장'}
+          </button>
         </div>
 
+        {/* Logout */}
         <button
-          onClick={handleSave}
-          className="w-full mt-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+          onClick={handleLogout}
+          className="w-full py-4 rounded-2xl font-bold text-sm border-2 border-red-200 text-red-500 bg-white hover:bg-red-50 transition-colors"
         >
-          {saved ? '저장됨 ✓' : '저장'}
+          로그아웃
         </button>
-      </div>
-
-      <button
-        onClick={handleLogout}
-        className="w-full py-3 border-2 border-red-200 text-red-500 rounded-xl font-semibold hover:bg-red-50 transition-colors"
-      >
-        로그아웃
-      </button>
+      </main>
     </div>
   )
 }

@@ -93,8 +93,9 @@ export default function StudyPage() {
 
   if (phase === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">단어 불러오는 중...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3">
+        <div className="w-10 h-10 border-2 border-[#4255ff] border-t-transparent rounded-full animate-spin" />
+        <p className="text-[#939bb4] text-sm">단어 불러오는 중...</p>
       </div>
     )
   }
@@ -122,34 +123,46 @@ export default function StudyPage() {
 
   // complete
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="text-center max-w-sm">
-        <p className="text-5xl mb-4">🎉</p>
-        <h2 className="text-2xl font-bold mb-2">오늘 학습 완료!</h2>
-        <div className="bg-white rounded-2xl p-6 shadow-sm mt-6 space-y-3 text-left">
-          <div className="flex justify-between">
-            <span className="text-gray-500">총 시도</span>
-            <span className="font-bold">{stats?.attempts}번</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">오늘 새로 암기</span>
-            <span className="font-bold text-green-600">+{stats?.newlyMastered}개</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">누적 암기 완료</span>
-            <span className="font-bold">{stats?.totalMastered} / 100</span>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-sm">
+        {/* Trophy */}
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-4">🎉</div>
+          <h2 className="text-2xl font-black text-[#2e3856]">오늘 학습 완료!</h2>
+          <p className="text-[#939bb4] mt-1 text-sm">수고했어요</p>
+        </div>
+
+        {/* Stats */}
+        <div className="bg-white rounded-2xl border border-[#d9dde8] overflow-hidden mb-6">
+          <div className="flex divide-x divide-[#d9dde8]">
+            <div className="flex-1 p-5 text-center">
+              <p className="text-3xl font-black text-[#4255ff]">{stats?.newlyMastered}</p>
+              <p className="text-xs text-[#939bb4] mt-1">오늘 암기</p>
+            </div>
+            <div className="flex-1 p-5 text-center">
+              <p className="text-3xl font-black text-[#2e3856]">{stats?.attempts}</p>
+              <p className="text-xs text-[#939bb4] mt-1">총 시도</p>
+            </div>
+            <div className="flex-1 p-5 text-center">
+              <p className="text-3xl font-black text-[#2e3856]">{stats?.totalMastered}</p>
+              <p className="text-xs text-[#939bb4] mt-1">누적 완료</p>
+            </div>
           </div>
         </div>
 
         {stats?.totalMastered === 100 && (
-          <div className="mt-6 p-4 bg-yellow-50 rounded-2xl border border-yellow-200">
-            <p className="font-bold text-yellow-700">🏆 100개 전부 정복!</p>
+          <div
+            className="mb-6 p-4 rounded-2xl text-center border"
+            style={{ backgroundColor: '#fffbeb', borderColor: '#fcd34d' }}
+          >
+            <p className="font-black text-yellow-700">🏆 100개 전부 정복!</p>
           </div>
         )}
 
         <button
           onClick={() => router.push('/dashboard')}
-          className="mt-8 w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+          className="w-full py-4 rounded-2xl font-bold text-white text-base transition-opacity hover:opacity-90"
+          style={{ backgroundColor: '#4255ff' }}
         >
           홈으로
         </button>
