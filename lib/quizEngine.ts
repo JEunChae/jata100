@@ -5,7 +5,7 @@ export function initQueue(
   words: Word[],
   progressMap: Map<number, Progress>
 ): QueueItem[] {
-  return words.map((word) => ({
+  const items = words.map((word) => ({
     word,
     progress: progressMap.get(word.id) ?? {
       user_id: '',
@@ -17,6 +17,11 @@ export function initQueue(
       updated_at: new Date().toISOString(),
     },
   }))
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]]
+  }
+  return items
 }
 
 export function processAnswer(
@@ -38,15 +43,17 @@ export function processAnswer(
 
   const updatedItem: QueueItem = { ...item, progress: updatedProgress }
   const newQueue = [...queue]
-  newQueue[index] = updatedItem
+  newQueue.splice(index, 1)
 
   if (graduated) {
-    newQueue.splice(index, 1)
     return { updatedQueue: newQueue, graduated: true, updatedItem }
   }
 
-  if (!isCorrect) {
-    newQueue.splice(index, 1)
+  if (isCorrect) {
+    // Re-insert at random position (not front) to avoid consecutive repetition
+    const insertAt = newQueue.length === 0 ? 0 : 1 + Math.floor(Math.random() * newQueue.length)
+    newQueue.splice(insertAt, 0, updatedItem)
+  } else {
     newQueue.push(updatedItem)
   }
 
