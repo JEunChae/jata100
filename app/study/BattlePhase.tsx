@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import type { Word, QueueItem } from '@/types'
 import { processAnswer, getDistractor, syncProgress } from '@/lib/quizEngine'
 
@@ -23,6 +24,7 @@ export default function BattlePhase({
   todayStr,
   onComplete,
 }: BattlePhaseProps) {
+  const router = useRouter()
   const [queue, setQueue] = useState<QueueItem[]>(initialQueue)
   const [attempts, setAttempts] = useState(0)
   const [newlyMastered, setNewlyMastered] = useState(0)
@@ -101,6 +103,14 @@ export default function BattlePhase({
 
       {/* Header */}
       <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8]">
+        <button
+          onClick={() => router.push('/dashboard')}
+          className="text-[#939bb4] hover:text-[#2e3856] transition-colors p-1 -ml-1"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
         <span className="text-sm font-semibold text-[#939bb4]">테스트</span>
         <span className="text-sm font-semibold text-[#2e3856]">남은 {remainingUnits}개</span>
       </div>

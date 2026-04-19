@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import type { Word } from '@/types'
 
 interface PreviewPhaseProps {
@@ -63,6 +64,7 @@ function WordCard({ word, compact = false }: { word: Word; compact?: boolean }) 
 }
 
 export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
+  const router = useRouter()
   const slides = buildSlides(words)
   const [index, setIndex] = useState(0)
 
@@ -89,7 +91,15 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
       </div>
 
       {/* Header */}
-      <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8] ">
+      <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8]">
+        <button
+          onClick={() => router.push('/dashboard')}
+          className="text-[#939bb4] hover:text-[#2e3856] transition-colors p-1 -ml-1"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
         <span className="text-sm font-semibold text-[#939bb4]">예습</span>
         <span className="text-sm font-semibold text-[#2e3856]">{index + 1} / {slides.length}</span>
       </div>
@@ -114,7 +124,7 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
           className="w-full py-4 rounded-2xl font-bold text-white text-lg transition-opacity hover:opacity-90 active:opacity-80"
           style={{ backgroundColor: '#4255ff' }}
         >
-          {isLast ? '전투 시작 →' : '다음'}
+          {isLast ? '테스트 시작 →' : '다음'}
         </button>
       </div>
     </div>
