@@ -29,8 +29,26 @@ export default function BattlePhase({
   const [answerState, setAnswerState] = useState<AnswerState>('idle')
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
 
+  function countUnits(q: QueueItem[]): number {
+    const seenPairs = new Set<number>()
+    let units = 0
+    for (const item of q) {
+      if (item.word.pair_id !== null) {
+        if (!seenPairs.has(item.word.pair_id)) {
+          seenPairs.add(item.word.pair_id)
+          units++
+        }
+      } else {
+        units++
+      }
+    }
+    return units
+  }
+
   const current = queue[0]
-  const progressPct = Math.max(2, (1 - queue.length / initialQueue.length) * 100)
+  const initialUnits = countUnits(initialQueue)
+  const remainingUnits = countUnits(queue)
+  const progressPct = Math.max(2, (1 - remainingUnits / initialUnits) * 100)
 
   // Memoized per word.id — prevents choice shuffling during feedback re-renders
   const choices = useMemo(() => {
@@ -83,8 +101,8 @@ export default function BattlePhase({
 
       {/* Header */}
       <div className="flex justify-between items-center px-5 py-3 bg-white border-b border-[#d9dde8]">
-        <span className="text-sm font-semibold text-[#939bb4]">전투</span>
-        <span className="text-sm font-semibold text-[#2e3856]">남은 {queue.length}개</span>
+        <span className="text-sm font-semibold text-[#939bb4]">테스트</span>
+        <span className="text-sm font-semibold text-[#2e3856]">남은 {remainingUnits}개</span>
       </div>
 
       {/* Question card */}
