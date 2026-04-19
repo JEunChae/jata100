@@ -8,6 +8,12 @@ create table if not exists sentence_exercises (
   created_at timestamptz not null default now()
 );
 
+alter table sentence_exercises enable row level security;
+
+create policy "sentence_exercises are public"
+  on sentence_exercises for select
+  using (true);
+
 create table if not exists sentence_progress (
   user_id uuid not null references auth.users(id) on delete cascade,
   exercise_id integer not null references sentence_exercises(id) on delete cascade,
@@ -17,5 +23,11 @@ create table if not exists sentence_progress (
   updated_at timestamptz not null default now(),
   primary key (user_id, exercise_id)
 );
+
+alter table sentence_progress enable row level security;
+
+create policy "users manage own sentence progress"
+  on sentence_progress for all
+  using (auth.uid() = user_id);
 
 create index if not exists idx_sentence_progress_user on sentence_progress(user_id);
