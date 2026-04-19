@@ -76,32 +76,54 @@ export default function DashboardPage() {
         </Link>
       </header>
 
-      <main className="flex-1 p-5 space-y-3">
-        <p className="text-xs font-semibold text-[#939bb4] uppercase tracking-wider px-1">레벨 선택</p>
+      <main className="flex-1 p-5 space-y-5">
+        <section className="space-y-3">
+          <p className="text-xs font-semibold text-[#939bb4] uppercase tracking-wider px-1">자/타동사 단어</p>
+          {LEVELS.map((level) => {
+            const mastered = data.levelProgress[level]
+            const pct = Math.round((mastered / 100) * 100)
+            return (
+              <button
+                key={level}
+                onClick={() => router.push(`/study?level=${level}`)}
+                className="w-full bg-white rounded-2xl border border-[#d9dde8] p-5 text-left hover:border-[#4255ff]/50 hover:shadow-sm transition-all active:opacity-80"
+              >
+                <div className="flex justify-between items-center mb-3">
+                  <span className="font-black text-[#2e3856] text-lg">{LEVEL_LABEL[level]}</span>
+                  <span className="text-sm font-bold text-[#4255ff]">{mastered} / 100</span>
+                </div>
+                <div className="h-2 bg-[#eef0f8] rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${pct}%`, backgroundColor: '#4255ff' }}
+                  />
+                </div>
+                <p className="text-xs text-[#939bb4] mt-2">{pct}% 완료</p>
+              </button>
+            )
+          })}
+        </section>
 
-        {LEVELS.map((level) => {
-          const mastered = data.levelProgress[level]
-          const pct = Math.round((mastered / 100) * 100)
-          return (
-            <button
-              key={level}
-              onClick={() => router.push(`/study?level=${level}`)}
-              className="w-full bg-white rounded-2xl border border-[#d9dde8] p-5 text-left hover:border-[#4255ff]/50 hover:shadow-sm transition-all active:opacity-80"
-            >
-              <div className="flex justify-between items-center mb-3">
-                <span className="font-black text-[#2e3856] text-lg">{LEVEL_LABEL[level]}</span>
-                <span className="text-sm font-bold text-[#4255ff]">{mastered} / 100</span>
+        <section className="space-y-3">
+          <p className="text-xs font-semibold text-[#939bb4] uppercase tracking-wider px-1">영작 연습</p>
+          <button
+            onClick={() => router.push('/sentence')}
+            className="w-full bg-white rounded-2xl border border-[#d9dde8] p-5 text-left hover:border-[#ff9500]/50 hover:shadow-sm transition-all active:opacity-80"
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="font-black text-[#2e3856] text-lg">문장 만들기</span>
+                <p className="text-xs text-[#939bb4] mt-1">케쌤 커리큘럼 · 181문장</p>
               </div>
-              <div className="h-2 bg-[#eef0f8] rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{ width: `${pct}%`, backgroundColor: '#4255ff' }}
-                />
-              </div>
-              <p className="text-xs text-[#939bb4] mt-2">{pct}% 완료</p>
-            </button>
-          )
-        })}
+              <span
+                className="text-xs font-black uppercase tracking-widest px-2 py-1 rounded-lg text-white"
+                style={{ backgroundColor: '#ff9500' }}
+              >
+                영작
+              </span>
+            </div>
+          </button>
+        </section>
       </main>
     </div>
   )

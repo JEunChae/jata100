@@ -35,3 +35,21 @@ export interface QueueItem {
   word: Word
   progress: Progress
 }
+
+export interface SentenceExercise {
+  id: number
+  chapter: string
+  order_index: number
+  korean: string
+  hints: string[]
+  english: string
+}
+
+export interface SentenceProgress {
+  user_id: string
+  exercise_id: number
+  attempt_count: number
+  correct_count: number
+  last_attempted_date: string | null
+  updated_at: string
+}
