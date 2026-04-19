@@ -1,5 +1,12 @@
 import type { Word, Progress } from '@/types'
 
+export function isLevelComplete(
+  levelWords: Word[],
+  progressMap: Map<number, Progress>,
+): boolean {
+  return levelWords.length > 0 && levelWords.every(w => progressMap.get(w.id)?.is_mastered === true)
+}
+
 export function selectTodayWords(
   allWords: Word[],
   progressMap: Map<number, Progress>,

@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { selectTodayWords } from '@/lib/wordSelector'
 import { initQueue } from '@/lib/quizEngine'
 import PreviewPhase from './PreviewPhase'
 import BattlePhase from './BattlePhase'
-import type { Word, Progress, QueueItem, UserSettings } from '@/types'
+import type { Word, Progress, QueueItem, UserSettings, WordLevel } from '@/types'
 
 type Phase = 'loading' | 'preview' | 'battle' | 'complete'
 
@@ -21,11 +21,14 @@ function toDateStr(d: Date): string {
   return d.toISOString().split('T')[0]
 }
 
-export default function StudyPage() {
+function StudyInner() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const levelParam = (searchParams.get('level') ?? 'beginner') as WordLevel
+
   const [phase, setPhase] = useState<Phase>('loading')
+  const [levelWords, setLevelWords] = useState<Word[]>([])
   const [todayWords, setTodayWords] = useState<Word[]>([])
-  const [allWords, setAllWords] = useState<Word[]>([])
   const [initialQueue, setInitialQueue] = useState<QueueItem[]>([])
   const [userId, setUserId] = useState('')
   const [stats, setStats] = useState<CompletionStats | null>(null)
@@ -42,28 +45,29 @@ export default function StudyPage() {
 
       const [{ data: settings }, { data: words }, { data: progressRows }] =
         await Promise.all([
-          supabase.from('user_settings').select('*').eq('id', user.id).single(),
-          supabase.from('words').select('*'),
+          supabase.from('user_settings').select('daily_goal').eq('id', user.id).single(),
+          supabase.from('words').select('*').eq('level', levelParam),
           supabase.from('progress').select('*').eq('user_id', user.id),
         ])
 
       if (!words) return
 
+      const s = settings as Pick<UserSettings, 'daily_goal'> | null
       const progressMap = new Map<number, Progress>(
         (progressRows ?? []).map((p) => [p.word_id, p])
       )
 
-      const daily = (settings as UserSettings)?.daily_goal ?? 20
+      const daily = s?.daily_goal ?? 20
       const selected = selectTodayWords(words as Word[], progressMap, daily)
 
-      setAllWords(words as Word[])
+      setLevelWords(words as Word[])
       setTodayWords(selected)
       setInitialQueue(initQueue(selected, progressMap))
       setPhase('preview')
     }
 
     load()
-  }, [router])
+  }, [router, levelParam])
 
   async function handleBattleComplete({
     attempts,
@@ -113,7 +117,7 @@ export default function StudyPage() {
     return (
       <BattlePhase
         initialQueue={initialQueue}
-        allWords={allWords}
+        allWords={levelWords}
         userId={userId}
         todayStr={todayStr}
         onComplete={handleBattleComplete}
@@ -125,14 +129,12 @@ export default function StudyPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        {/* Trophy */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🎉</div>
-          <h2 className="text-2xl font-black text-[#2e3856]">오늘 학습 완료!</h2>
+          <h2 className="text-2xl font-black text-[#2e3856]">학습 완료!</h2>
           <p className="text-[#939bb4] mt-1 text-sm">수고했어요</p>
         </div>
 
-        {/* Stats */}
         <div className="bg-white rounded-2xl border border-[#d9dde8] overflow-hidden mb-6">
           <div className="flex divide-x divide-[#d9dde8]">
             <div className="flex-1 p-5 text-center">
@@ -150,15 +152,6 @@ export default function StudyPage() {
           </div>
         </div>
 
-        {stats?.totalMastered === 100 && (
-          <div
-            className="mb-6 p-4 rounded-2xl text-center border"
-            style={{ backgroundColor: '#fffbeb', borderColor: '#fcd34d' }}
-          >
-            <p className="font-black text-yellow-700">🏆 100개 전부 정복!</p>
-          </div>
-        )}
-
         <button
           onClick={() => router.push('/dashboard')}
           className="w-full py-4 rounded-2xl font-bold text-white text-base transition-opacity hover:opacity-90"
@@ -168,5 +161,17 @@ export default function StudyPage() {
         </button>
       </div>
     </div>
+  )
+}
+
+export default function StudyPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-[#4255ff] border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <StudyInner />
+    </Suspense>
   )
 }

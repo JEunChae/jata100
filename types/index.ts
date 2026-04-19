@@ -1,6 +1,7 @@
 // types/index.ts
 
 export type WordType = 'Vi' | 'Vt'
+export type WordLevel = 'beginner' | 'intermediate' | 'advanced'
 
 export interface Word {
   id: number
@@ -9,6 +10,7 @@ export interface Word {
   korean_vt: string | null
   type: WordType
   pair_id: number | null
+  level: WordLevel
 }
 
 export interface Progress {
@@ -25,6 +27,7 @@ export interface UserSettings {
   id: string
   daily_goal: number
   last_completed_date: string | null
+  current_level: WordLevel
   created_at: string
 }
 

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { selectTodayWords } from './wordSelector'
+import { selectTodayWords, isLevelComplete } from './wordSelector'
 import type { Word, Progress } from '@/types'
 
 function makeWord(id: number, type: 'Vi' | 'Vt', pair_id: number | null = null): Word {
-  return { id, english: `word${id}`, korean_vi: type === 'Vi' ? '뜻' : null, korean_vt: type === 'Vt' ? '~을 뜻' : null, type, pair_id }
+  return { id, english: `word${id}`, korean_vi: type === 'Vi' ? '뜻' : null, korean_vt: type === 'Vt' ? '~을 뜻' : null, type, pair_id, level: 'beginner' }
 }
 
 function makeProgress(word_id: number, overrides: Partial<Progress> = {}): Progress {
@@ -77,5 +77,29 @@ describe('selectTodayWords', () => {
     const ids = result.map(w => w.id)
     expect(ids).toContain(1)
     expect(ids).not.toContain(2)
+  })
+})
+
+describe('isLevelComplete', () => {
+  it('returns true when all words are mastered', () => {
+    const words = [makeWord(1, 'Vi'), makeWord(2, 'Vt')]
+    const map = new Map([
+      [1, makeProgress(1, { is_mastered: true })],
+      [2, makeProgress(2, { is_mastered: true })],
+    ])
+    expect(isLevelComplete(words, map)).toBe(true)
+  })
+
+  it('returns false when some words are unmastered', () => {
+    const words = [makeWord(1, 'Vi'), makeWord(2, 'Vt')]
+    const map = new Map([
+      [1, makeProgress(1, { is_mastered: true })],
+      [2, makeProgress(2, { is_mastered: false })],
+    ])
+    expect(isLevelComplete(words, map)).toBe(false)
+  })
+
+  it('returns false for empty word list', () => {
+    expect(isLevelComplete([], new Map())).toBe(false)
   })
 })

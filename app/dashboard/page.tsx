@@ -4,7 +4,15 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import type { UserSettings } from '@/types'
+import type { UserSettings, WordLevel } from '@/types'
+
+const LEVEL_LABEL: Record<WordLevel, string> = {
+  beginner: '초급',
+  intermediate: '중급',
+  advanced: '고급',
+}
+
+const LEVELS: WordLevel[] = ['beginner', 'intermediate', 'advanced']
 
 function toDateStr(d: Date) {
   return d.toISOString().split('T')[0]
@@ -12,8 +20,7 @@ function toDateStr(d: Date) {
 
 interface DashboardData {
   dailyGoal: number
-  totalMastered: number
-  completedToday: boolean
+  levelProgress: Record<WordLevel, number>
 }
 
 export default function DashboardPage() {
@@ -26,23 +33,24 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/'); return }
 
-      const todayStr = toDateStr(new Date())
-
-      const [{ data: settings }, { count: mastered }] = await Promise.all([
-        supabase.from('user_settings').select('*').eq('id', user.id).single(),
-        supabase
-          .from('progress')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('is_mastered', true),
+      const [{ data: settings }, { data: words }, { data: progressRows }] = await Promise.all([
+        supabase.from('user_settings').select('daily_goal').eq('id', user.id).single(),
+        supabase.from('words').select('id, level'),
+        supabase.from('progress').select('word_id').eq('user_id', user.id).eq('is_mastered', true),
       ])
 
-      const s = settings as UserSettings | null
-      setData({
-        dailyGoal: s?.daily_goal ?? 20,
-        totalMastered: mastered ?? 0,
-        completedToday: s?.last_completed_date === todayStr,
-      })
+      const s = settings as Pick<UserSettings, 'daily_goal'> | null
+      const masteredIds = new Set((progressRows ?? []).map((p: { word_id: number }) => p.word_id))
+
+      const levelProgress = {} as Record<WordLevel, number>
+      for (const level of LEVELS) {
+        const ids = (words ?? [])
+          .filter((w: { id: number; level: string }) => w.level === level)
+          .map((w: { id: number }) => w.id)
+        levelProgress[level] = ids.filter(id => masteredIds.has(id)).length
+      }
+
+      setData({ dailyGoal: s?.daily_goal ?? 20, levelProgress })
     }
     load()
   }, [router])
@@ -54,8 +62,6 @@ export default function DashboardPage() {
       </div>
     )
   }
-
-  const progressPct = Math.round((data.totalMastered / 100) * 100)
 
   return (
     <div className="min-h-screen max-w-sm mx-auto flex flex-col md:pt-10">
@@ -70,54 +76,32 @@ export default function DashboardPage() {
         </Link>
       </header>
 
-      <main className="flex-1 p-5 space-y-4">
-        {/* Progress card */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#d9dde8]">
-          <p className="text-xs font-semibold text-[#939bb4] uppercase tracking-wider mb-3">전체 암기 진도</p>
-          <div className="flex items-end gap-2 mb-4">
-            <span className="text-5xl font-black text-[#2e3856]">{data.totalMastered}</span>
-            <span className="text-xl text-[#939bb4] mb-1 font-semibold">/ 100</span>
-          </div>
-          <div className="h-2.5 bg-[#eef0f8] rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${progressPct}%`, backgroundColor: '#4255ff' }}
-            />
-          </div>
-          <p className="text-right text-xs text-[#939bb4] mt-2 font-medium">{progressPct}% 완료</p>
-        </div>
+      <main className="flex-1 p-5 space-y-3">
+        <p className="text-xs font-semibold text-[#939bb4] uppercase tracking-wider px-1">레벨 선택</p>
 
-        {/* CTA */}
-        {data.completedToday ? (
-          <div className="bg-[#e8fdf2] border border-[#b2ecd1] rounded-2xl p-6 text-center">
-            <p className="text-2xl mb-2">✓</p>
-            <p className="font-bold text-[#1a7a4a] text-lg">오늘 학습 완료!</p>
-            <p className="text-[#4caf82] text-sm mt-1">내일 또 만나요</p>
-          </div>
-        ) : (
-          <button
-            onClick={() => router.push('/study')}
-            className="w-full py-5 rounded-2xl font-black text-white text-xl transition-opacity hover:opacity-90 active:opacity-80 shadow-lg"
-            style={{ backgroundColor: '#4255ff', boxShadow: '0 4px 20px rgba(66, 85, 255, 0.35)' }}
-          >
-            학습 시작
-            <span className="block text-sm font-normal mt-1 opacity-80">
-              오늘 {data.dailyGoal}개
-            </span>
-          </button>
-        )}
-
-        {/* Stats row */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white rounded-2xl p-4 border border-[#d9dde8] text-center">
-            <p className="text-2xl font-black text-[#4255ff]">{data.totalMastered}</p>
-            <p className="text-xs text-[#939bb4] mt-1">암기 완료</p>
-          </div>
-          <div className="bg-white rounded-2xl p-4 border border-[#d9dde8] text-center">
-            <p className="text-2xl font-black text-[#2e3856]">{100 - data.totalMastered}</p>
-            <p className="text-xs text-[#939bb4] mt-1">남은 단어</p>
-          </div>
-        </div>
+        {LEVELS.map((level) => {
+          const mastered = data.levelProgress[level]
+          const pct = Math.round((mastered / 100) * 100)
+          return (
+            <button
+              key={level}
+              onClick={() => router.push(`/study?level=${level}`)}
+              className="w-full bg-white rounded-2xl border border-[#d9dde8] p-5 text-left hover:border-[#4255ff]/50 hover:shadow-sm transition-all active:opacity-80"
+            >
+              <div className="flex justify-between items-center mb-3">
+                <span className="font-black text-[#2e3856] text-lg">{LEVEL_LABEL[level]}</span>
+                <span className="text-sm font-bold text-[#4255ff]">{mastered} / 100</span>
+              </div>
+              <div className="h-2 bg-[#eef0f8] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ width: `${pct}%`, backgroundColor: '#4255ff' }}
+                />
+              </div>
+              <p className="text-xs text-[#939bb4] mt-2">{pct}% 완료</p>
+            </button>
+          )
+        })}
       </main>
     </div>
   )
