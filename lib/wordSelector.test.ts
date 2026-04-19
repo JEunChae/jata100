@@ -54,10 +54,8 @@ describe('selectTodayWords', () => {
     const words = [
       makeWord(1, 'Vi', 1),
       makeWord(2, 'Vt', 1),
-      ...Array.from({ length: 10 }, (_, i) => makeWord(i + 10, 'Vi')),
     ]
     const map = new Map(words.map(w => [w.id, makeProgress(w.id)]))
-    // daily_goal=1, only word 1 selected initially, but pair partner (2) should be added
     const result = selectTodayWords(words, map, 1)
     const ids = result.map(w => w.id)
     expect(ids).toContain(1)

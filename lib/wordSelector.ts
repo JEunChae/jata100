@@ -25,10 +25,6 @@ export function selectTodayWords(
     const db = progressMap.get(b.id)?.last_seen_date ?? ''
     if (da !== db) return da < db ? -1 : 1
 
-    if ((a.pair_id !== null) !== (b.pair_id !== null)) {
-      return a.pair_id !== null ? -1 : 1
-    }
-
     return Math.random() - 0.5
   })
 
