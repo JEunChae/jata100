@@ -1503,7 +1503,7 @@ export default function PreviewPhase({ words, onComplete }: PreviewPhaseProps) {
         onClick={handleNext}
         className="w-full py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors"
       >
-        {isLast ? '전투 시작 →' : '다음'}
+        {isLast ? '테스트 시작 →' : '다음'}
       </button>
     </div>
   )
@@ -1601,7 +1601,7 @@ export default function BattlePhase({
       {/* Progress bar */}
       <div className="mb-6">
         <div className="flex justify-between text-sm text-gray-500 mb-1">
-          <span>전투</span>
+          <span>테스트</span>
           <span>남은 단어 {queue.length}개</span>
         </div>
         <div className="h-2 bg-gray-200 rounded-full">

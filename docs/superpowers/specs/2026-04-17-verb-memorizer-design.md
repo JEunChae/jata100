@@ -77,7 +77,7 @@ CREATE TABLE progress (
 /               로그인 페이지
 /onboarding     첫 로그인 1회 — 하루 목표 설정 (10/20/30/50)
 /dashboard      홈 — 오늘 진도 + 전체 진도 + 학습 시작 버튼
-/study          학습 화면 (예습 → 전투)
+/study          학습 화면 (예습 → 테스트)
 /settings       하루 목표 변경 + 로그아웃
 ```
 
@@ -101,9 +101,9 @@ CREATE TABLE progress (
 - 오늘의 N개 단어를 순서대로 카드 형태로 표시
 - 짝꿍 단어: 두 카드 나란히 표시 (차이점 강조)
 - [다음] 버튼으로 넘기기만 (채점 없음)
-- 전체 완료 → 전투 Phase 시작
+- 전체 완료 → 테스트 Phase 시작
 
-### 전투 Phase
+### 테스트 Phase
 
 ```
 큐 = 오늘의 N개 단어 (셔플)
@@ -150,7 +150,7 @@ supabase.from('progress').upsert({
 
 ### 오늘 세션 재진입 차단
 
-- 전투 Phase 완료(큐 = 0) 후 `/dashboard` 복귀
+- 테스트 Phase 완료(큐 = 0) 후 `/dashboard` 복귀
 - `last_seen_date = today` 이고 오늘 전투 완료 플래그(세션 상태)가 있으면
   [학습 시작] 버튼 비활성화 + "오늘 학습 완료! 내일 다시 만나요" 메시지
 
