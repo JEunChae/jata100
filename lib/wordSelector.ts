@@ -25,7 +25,6 @@ export function selectTodayWords(
     const db = progressMap.get(b.id)?.last_seen_date ?? ''
     if (da !== db) return da < db ? -1 : 1
 
-    // Prefer words with pair_id when all else is equal
     if ((a.pair_id !== null) !== (b.pair_id !== null)) {
       return a.pair_id !== null ? -1 : 1
     }
@@ -33,20 +32,30 @@ export function selectTodayWords(
     return Math.random() - 0.5
   })
 
-  const base = sorted.slice(0, dailyGoal)
-  const selectedIds = new Set(base.map((w) => w.id))
+  // 짝꿍을 1유닛으로 계산해서 정확히 dailyGoal 유닛 선택
+  const result: Word[] = []
+  const selectedIds = new Set<number>()
+  let units = 0
 
-  const extras: Word[] = []
-  for (const w of base) {
-    if (w.pair_id === null) continue
-    const partner = unmastered.find(
-      (u) => u.pair_id === w.pair_id && u.id !== w.id && !selectedIds.has(u.id)
-    )
-    if (partner) {
-      extras.push(partner)
-      selectedIds.add(partner.id)
+  for (const word of sorted) {
+    if (units >= dailyGoal) break
+    if (selectedIds.has(word.id)) continue
+
+    selectedIds.add(word.id)
+    result.push(word)
+
+    if (word.pair_id !== null) {
+      const partner = unmastered.find(
+        (u) => u.pair_id === word.pair_id && u.id !== word.id && !selectedIds.has(u.id)
+      )
+      if (partner) {
+        selectedIds.add(partner.id)
+        result.push(partner)
+      }
     }
+
+    units++
   }
 
-  return [...base, ...extras]
+  return result
 }
